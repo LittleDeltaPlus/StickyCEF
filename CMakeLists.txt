@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 
 # Project name.
-project(cef_test)
+project(StickyCef)
 
 # Use folders in the resulting project files.
 set_property(GLOBAL PROPERTY OS_FOLDERS ON)
@@ -16,7 +16,7 @@ set_property(GLOBAL PROPERTY OS_FOLDERS ON)
 #
 
 # Specify the CEF distribution version.
-set(CEF_VERSION "87.1.11+g8bb7705+chromium-87.0.4280.66")
+set(CEF_VERSION "87.1.12+g03f9336+chromium-87.0.4280.88")
 
 #Ensure the required version of CEF is stored locally
 include(cmake/DownloadCEF.cmake)
