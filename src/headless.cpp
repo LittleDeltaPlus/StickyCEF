@@ -4,7 +4,10 @@
 
 
 #include <iostream>
-#include <jpeglib.h>
+#include <vector>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgcodecs.hpp>
 
 #include "include/cef_app.h"
 #include "include/cef_client.h"
@@ -49,9 +52,12 @@ public:
 
     void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override {
         if(begin){
-            auto* img = (unsigned char*)buffer;
-            printf("frame rendered (pixel[0]: (%d %d %d - %d)\n", img[2], img[1], img[0], img[3]);
-
+            auto buf = (unsigned char*)buffer;
+//            std::vector<unsigned char> ImVec(buf, (unsigned char*)buffer + renderWidth*renderHeight*4);
+//            cv::Mat img_output = cv::imdecode(ImVec, 1); //img_output(renderHeight,renderWidth,CV_16S,(unsigned char*)buffer);
+            cv::Mat img_output(renderHeight, renderWidth, CV_8UC4, buf);
+            printf("frame rendered (pixel[0]: (%d %d %d - %d)\n", buf[2], buf[1], buf[0], buf[3]);
+            imshow("display", img_output);
         }
     }
 
@@ -106,7 +112,7 @@ int main(int argc, char* argv[]) {
 
     // Dynamic HTML example: https://dmitrybaranovskiy.github.io/raphael/polar-clock.html
     // Static HTML example: https://www.magpcss.org/ceforum/index.php
-    CefRefPtr<CefBrowser> browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), "https://www.magpcss.org/ceforum/index.php", browserSettings,
+    CefRefPtr<CefBrowser> browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), "https://dmitrybaranovskiy.github.io/raphael/polar-clock.html", browserSettings,
                                                                       nullptr, nullptr);
     CefRunMessageLoop();
 
