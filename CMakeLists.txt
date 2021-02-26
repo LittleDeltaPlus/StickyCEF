@@ -7,15 +7,15 @@ set(CMAKE_CONFIGURATION_TYPES Debug Release)
 ## Cross Compiler Settings
 
 # Crosscompiler location
-SET(CMAKE_C_COMPILER /home/lildeltaplus/pi-tool/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc)
-SET(CMAKE_CXX_COMPILER /home/lildeltaplus/pi-tool/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc)
-
-# Pi Sysroot
-SET(CMAKE_FIND_ROOT_PATH /home/lildeltaplus/pi-tool/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/sysroot)
-
-SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+#SET(CMAKE_C_COMPILER /home/lildeltaplus/pi-tool/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc)
+#SET(CMAKE_CXX_COMPILER /home/lildeltaplus/pi-tool/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc)
+#
+## Pi Sysroot
+#SET(CMAKE_FIND_ROOT_PATH /home/lildeltaplus/pi-tool/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/sysroot)
+#
+#SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+#SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+#SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 ##
 
 # Project name.
