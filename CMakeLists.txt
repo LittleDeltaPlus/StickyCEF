@@ -36,6 +36,8 @@ set(CEF_VERSION "88.2.9+g5c8711a+chromium-88.0.4324.182")
 include(cmake/DownloadCEF.cmake)
 DownloadCEF("linuxarm" "${CEF_VERSION}" "${CMAKE_SOURCE_DIR}/third_party/cef")
 
+set(PROJECT_ARCH "linuxarm")
+set(CEF_PLATFORM "linuxarm")
 #let CEF add its own submodules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CEF_ROOT}/cmake")
 
