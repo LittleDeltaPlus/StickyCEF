@@ -79,6 +79,7 @@ public:
 //            cv::Mat img_output_grey(renderHeight, renderWidth, CV_8U, mono);
 //            imshow("display", DitherImg(img_output_grey));
 //            imshow("display", img_output_grey);
+            printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono[0], mono[1], mono[2]);
         }
     }
 
