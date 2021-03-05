@@ -16,6 +16,7 @@ if(OS_LINUX)
 
     # Copy binary and resource files to the target output directory.
     COPY_FILES("${CEF_TARGET}" "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}")
+
     COPY_FILES("${CEF_TARGET}" "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
     if (EXISTS "${CEF_BINARY_DIR}/libminigbm.so")
         COPY_FILES("${CEF_TARGET}" "libminigbm.so" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}")
@@ -23,4 +24,12 @@ if(OS_LINUX)
 
     # Set SUID permissions on the chrome-sandbox target.
     SET_LINUX_SUID_PERMISSIONS("${CEF_TARGET}" "${CEF_TARGET_OUT_DIR}/chrome-sandbox")
+
+    # Install Script
+    install(TARGETS ${CEF_TARGET}
+            RUNTIME DESTINATION bin)
+    install(DIRECTORY "${CEF_RESOURCE_DIR}/"
+            DESTINATION bin)
+    install(DIRECTORY "${CEF_BINARY_DIR}/"
+            DESTINATION bin)
 endif()
