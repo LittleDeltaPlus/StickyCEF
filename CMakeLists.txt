@@ -1,11 +1,25 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.12)
 
 # CMAKE configuration
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 
+## Cross Compiler Settings
+
+# Crosscompiler location
+#SET(CMAKE_C_COMPILER /home/lildeltaplus/pi-tool/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc)
+#SET(CMAKE_CXX_COMPILER /home/lildeltaplus/pi-tool/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc)
+#
+## Pi Sysroot
+#SET(CMAKE_FIND_ROOT_PATH /home/lildeltaplus/pi-tool/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/sysroot)
+#
+#SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+#SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+#SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+##
+
 # Project name.
-project(cef_test)
+project(StickyCef)
 
 # Use folders in the resulting project files.
 set_property(GLOBAL PROPERTY OS_FOLDERS ON)
@@ -16,12 +30,14 @@ set_property(GLOBAL PROPERTY OS_FOLDERS ON)
 #
 
 # Specify the CEF distribution version.
-set(CEF_VERSION "87.1.11+g8bb7705+chromium-87.0.4280.66")
+set(CEF_VERSION "88.2.9+g5c8711a+chromium-88.0.4324.182")
 
 #Ensure the required version of CEF is stored locally
 include(cmake/DownloadCEF.cmake)
-DownloadCEF("linux64" "${CEF_VERSION}" "${CMAKE_SOURCE_DIR}/third_party/cef")
+DownloadCEF("linuxarm" "${CEF_VERSION}" "${CMAKE_SOURCE_DIR}/third_party/cef")
 
+set(PROJECT_ARCH "linuxarm")
+set(CEF_PLATFORM "linuxarm")
 #let CEF add its own submodules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CEF_ROOT}/cmake")
 
@@ -44,7 +60,9 @@ find_package(CEF REQUIRED)
 add_subdirectory(${CEF_LIBCEF_DLL_WRAPPER_PATH} libcef_dll_wrapper)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-
+#Include OpenCV
+#find_package(OpenCV REQUIRED)
+#include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 #add_subdirectory(${CMAKE_SOURCE_DIR}/shared shared)
 # Include application targets.
