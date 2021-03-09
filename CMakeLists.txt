@@ -52,9 +52,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 find_package(OpenCV REQUIRED)
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-find_package(Python3 COMPONENTS Interpreter Development)
-find_package(PythonLibs REQUIRED)
-include_directories(${PYTHON_INCLUDE_DIRS})
+#find_package(Python3 COMPONENTS Interpreter Development)
+#find_package(PythonLibs REQUIRED)
+#include_directories(${PYTHON_INCLUDE_DIRS})
+
+find_library(wiringPi REQUIRED)
 
 #add_subdirectory(${CMAKE_SOURCE_DIR}/shared shared)
 # Include application targets.

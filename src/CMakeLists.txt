@@ -8,11 +8,12 @@ if(OS_LINUX)
     SET_EXECUTABLE_TARGET_PROPERTIES(${CEF_TARGET})
     add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
 
-    add_library(inky inky.cpp ../inc/inky.h)
+    add_library(epd ../tmp/epd4in2.cpp ../tmp/epdif.cpp ../tmp/epdpaint.cpp ../tmp/epd4in2.h ../tmp/epdif.h ../tmp/epdpaint.h
+            ../tmp/font8.cpp ../tmp/font12.cpp ../tmp/font16.cpp ../tmp/font20.cpp ../tmp/font24.cpp ../tmp/fonts.h)
     add_library(dither dither.cpp ../inc/dither.h)
-    include_directories(../inc ../src)
+    include_directories(../inc ../src ../tmp)
 
-    target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper inky ${CEF_STANDARD_LIBS} ${OpenCV_LIBS} ${PYTHON_LIBRARIES})
+    target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper epd ${CEF_STANDARD_LIBS} ${OpenCV_LIBS} ${PYTHON_LIBRARIES} wiringPi)
 
     # Set rpath so that libraries can be placed next to the executable.
     set_target_properties(${CEF_TARGET} PROPERTIES INSTALL_RPATH "$ORIGIN")

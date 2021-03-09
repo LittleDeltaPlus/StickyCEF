@@ -14,7 +14,11 @@
 #include "include/cef_render_handler.h"
 #include "include/cef_load_handler.h"
 
-#include "inc/inky.h"
+#include "tmp/epd4in2.h"
+#include "tmp/epdpaint.h"
+
+#define COLORED      1
+#define UNCOLORED    0
 
 bool pgLoaded = false;
 
@@ -85,8 +89,7 @@ public:
 //            imshow("display", DitherImg(img_output_grey));
 //            imshow("display", img_output_grey);
             printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono_vec[0], mono_vec[1], mono_vec[2]);
-            //UpdateInky();
-            EPD_4IN2_Clear();
+
         }
     }
 
@@ -118,6 +121,16 @@ IMPLEMENT_REFCOUNTING(BrowserClient);
 
 
 int main(int argc, char* argv[]) {
+    Epd epd;
+    if (epd.Init() != 0) {
+        printf("e-Paper init failed\n");
+        return -1;
+    }
+    unsigned char* frame_buffer = (unsigned char*)malloc(epd.width / 8 * epd.height);
+
+    Paint paint(frame_buffer, epd.width, epd.height);
+    paint.Clear(UNCOLORED);
+
     CefMainArgs main_args(argc, argv);
 
     int exit_code = CefExecuteProcess(main_args, nullptr, nullptr);
