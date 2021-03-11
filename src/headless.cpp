@@ -4,26 +4,15 @@
 
 #include <iostream>
 #include <vector>
-//#include <opencv2/core/mat.hpp>
-//#include <opencv2/highgui.hpp>
-//#include <opencv2/imgcodecs.hpp>
-//#include <opencv2/imgproc/imgproc.hpp>
+#include <Python.h>
 
 #include "include/cef_app.h"
 #include "include/cef_client.h"
 #include "include/cef_render_handler.h"
 #include "include/cef_load_handler.h"
 
-#include "tmp/epd4in2.h"
-#include "tmp/epdpaint.h"
-
-#define COLORED      1
-#define UNCOLORED    0
-
 bool pgLoaded = false;
 
-//uint8_t saturated_add(uint8_t val1, int8_t val2);
-//cv::Mat DitherImg(const cv::Mat& input);
 
 class LodHandler : public CefLoadHandler {
 private:
@@ -84,10 +73,6 @@ public:
                 mono[i] = (buf[i * 4]);
             }
 
-//            cv::Mat img_output_grey(renderHeight, renderWidth, CV_8U, mono);
-
-//            imshow("display", DitherImg(img_output_grey));
-//            imshow("display", img_output_grey);
             printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono_vec[0], mono_vec[1], mono_vec[2]);
 
         }
@@ -121,16 +106,6 @@ IMPLEMENT_REFCOUNTING(BrowserClient);
 
 
 int main(int argc, char* argv[]) {
-    Epd epd;
-    if (epd.Init() != 0) {
-        printf("e-Paper init failed\n");
-        return -1;
-    }
-    auto* frame_buffer = (unsigned char*)malloc(epd.width / 8 * epd.height);
-
-    Paint paint(frame_buffer, epd.width, epd.height);
-    paint.Clear(UNCOLORED);
-
     CefMainArgs main_args(argc, argv);
 
     int exit_code = CefExecuteProcess(main_args, nullptr, nullptr);
@@ -164,71 +139,3 @@ int main(int argc, char* argv[]) {
     CefShutdown();
     return 0;
 }
-
-//uint8_t saturated_add(uint8_t val1, int8_t val2){
-//    int16_t val1_int = val1;
-//    int16_t val2_int = val2;
-//    int16_t tmp = val1_int + val2_int;
-//
-//    if(tmp > 255)
-//    {
-//        return 255;
-//    }
-//    else if(tmp < 0)
-//    {
-//        return 0;
-//    }
-//    else
-//    {
-//        return tmp;
-//    }
-//}
-//
-//cv::Mat DitherImg(const cv::Mat& input) {
-//    cv::Mat output = input.clone();
-////    cv::cvtColor(input, output, cv::COLOR_RGB2GRAY);
-//
-//    int imgHeight = output.rows;
-//    int imgWidth = output.cols;
-//    int err;
-//    int8_t a,b,c,d;
-//
-//    for(int i=0; i<imgHeight; i++)
-//    {
-//        for(int j=0; j<imgWidth; j++)
-//        {
-//            if(output.at<uint8_t>(i,j) > 127)
-//            {
-//                err = output.at<uint8_t>(i,j) - 255;
-//                output.at<uint8_t>(i,j) = 255;
-//            }
-//            else
-//            {
-//                err = output.at<uint8_t>(i,j) - 0;
-//                output.at<uint8_t>(i,j) = 0;
-//            }
-//
-//            a = (err * 7) / 16;
-//            b = (err * 1) / 16;
-//            c = (err * 5) / 16;
-//            d = (err * 3) / 16;
-//
-//            if((i != (imgHeight-1)) && (j != 0) && (j != (imgWidth - 1)))
-//            {
-//                output.at<uint8_t>(i+0,j+1) = saturated_add(output.at<uint8_t>(i+0,j+1),a);
-//                output.at<uint8_t>(i+1,j+1) = saturated_add(output.at<uint8_t>(i+1,j+1),b);
-//                output.at<uint8_t>(i+1,j+0) = saturated_add(output.at<uint8_t>(i+1,j+0),c);
-//                output.at<uint8_t>(i+1,j-1) = saturated_add(output.at<uint8_t>(i+1,j-1),d);
-//            }
-//        }
-//    }
-//    //mask black that is originally in the image
-////    for (int i = 0; i < imgHeight; ++i) {
-////        for (int j = 0; j < imgWidth; ++j) {
-////            if (input.at<uint8_t>(i,j) == 0){
-////                output.at<uint8_t>(i,j)=0;
-////            }
-////        }
-////    }
-//    return output;
-//}
