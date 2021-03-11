@@ -13,7 +13,7 @@ if(OS_LINUX)
     add_library(dither dither.cpp ../inc/dither.h)
     include_directories(../inc ../src ../tmp)
 
-    target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS})# ${OpenCV_LIBS} ${PYTHON_LIBRARIES})
+    target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper epd ${CEF_STANDARD_LIBS})# ${OpenCV_LIBS} ${PYTHON_LIBRARIES})
 
     # Set rpath so that libraries can be placed next to the executable.
     set_target_properties(${CEF_TARGET} PROPERTIES INSTALL_RPATH "$ORIGIN")
