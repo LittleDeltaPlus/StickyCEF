@@ -4,12 +4,12 @@
 
 #include <iostream>
 #include <vector>
-#include <Python.h>
 
 #include "include/cef_app.h"
 #include "include/cef_client.h"
 #include "include/cef_render_handler.h"
 #include "include/cef_load_handler.h"
+#include "inc/update_inky.h"
 
 bool pgLoaded = false;
 
@@ -67,13 +67,13 @@ public:
         if(pgLoaded){
             auto buf = (unsigned char*)buffer;
             auto* mono = (unsigned char*) malloc(renderWidth * renderHeight * 4 * sizeof (int));
-            std::vector<unsigned char> mono_vec(renderWidth * renderHeight * 4);
-            for (int i = 0; i < renderWidth*renderHeight; i++) {
-                mono_vec[i] = (buf[i * 4]);
-                mono[i] = (buf[i * 4]);
-            }
-
-            printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono_vec[0], mono_vec[1], mono_vec[2]);
+//            std::vector<unsigned char> mono_vec(renderWidth * renderHeight * 4);
+//            for (int i = 0; i < renderWidth*renderHeight; i++) {
+//                mono_vec[i] = (buf[i * 4]);
+//                mono[i] = (buf[i * 4]);
+//            }
+            UpdateInky(reinterpret_cast<const char*>(mono));
+            printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono[0], mono[1], mono[2]);
 
         }
     }
