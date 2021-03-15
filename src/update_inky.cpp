@@ -11,7 +11,7 @@ void UpdateInky(const char* img){
     CPyInstance pyInstance;
 
     CPyObject sysPath = PySys_GetObject("path");
-    PyList_Insert(sysPath, 0, PyUnicode_FromString("/home/pi/Downloads/StickyCef/src"));
+    PyList_Insert(sysPath, 0, PyUnicode_FromString("/home/pi/Downloads/StickyCEF/src"));
 
     CPyObject pName = PyUnicode_FromString("update_inky");
     CPyObject pModule = PyImport_Import(pName);

@@ -12,6 +12,7 @@
 #include "inc/update_inky.h"
 
 bool pgLoaded = false;
+signed char frameMultiplier = 0;
 
 
 class LodHandler : public CefLoadHandler {
@@ -60,21 +61,22 @@ public:
 
     void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect) override {
         rect = CefRect(0, 0, renderWidth, renderHeight);
-//        return true;
     }
 
     void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override {
-        if(pgLoaded){
+        if(pgLoaded and frameMultiplier > 15){
             auto buf = (unsigned char*)buffer;
             auto* mono = (unsigned char*) malloc(renderWidth * renderHeight * 4 * sizeof (int));
 //            std::vector<unsigned char> mono_vec(renderWidth * renderHeight * 4);
-//            for (int i = 0; i < renderWidth*renderHeight; i++) {
+            for (int i = 0; i < renderWidth*renderHeight; i++) {
 //                mono_vec[i] = (buf[i * 4]);
-//                mono[i] = (buf[i * 4]);
-//            }
+                mono[i] = (buf[i * 4]);
+            }
             UpdateInky(reinterpret_cast<const char*>(mono));
             printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono[0], mono[1], mono[2]);
-
+            frameMultiplier = 0;
+        } else {
+            frameMultiplier++;
         }
     }
 
@@ -131,7 +133,7 @@ int main(int argc, char* argv[]) {
 
     // Dynamic HTML example: https://dmitrybaranovskiy.github.io/raphael/polar-clock.html
     // Static HTML example: https://www.magpcss.org/ceforum/index.php
-    CefRefPtr<CefBrowser> browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), "https://www.magpcss.org/ceforum/index.php", browserSettings,
+    CefRefPtr<CefBrowser> browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), "https://lil-delta.dev/nazotoki", browserSettings,
 
                                                                       nullptr, nullptr);
     CefRunMessageLoop();
