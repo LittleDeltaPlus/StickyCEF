@@ -13,6 +13,7 @@
 
 bool pgLoaded = false;
 signed char frameMultiplier = 0;
+InkyHelper inkyHelper;
 
 
 class LodHandler : public CefLoadHandler {
@@ -72,7 +73,7 @@ public:
 //                mono_vec[i] = (buf[i * 4]);
                 mono[i] = (buf[i * 4]);
             }
-            UpdateInky(reinterpret_cast<const char*>(mono));
+            UpdateInky(inkyHelper,reinterpret_cast<const char*>(mono));
             printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono[0], mono[1], mono[2]);
             frameMultiplier = 0;
         } else {
