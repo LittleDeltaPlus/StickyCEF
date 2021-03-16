@@ -10,11 +10,13 @@
 #include "include/cef_render_handler.h"
 #include "include/cef_load_handler.h"
 #include "inc/update_inky.h"
+#include "inc/pyhelper.hpp"
 
 bool pgLoaded = false;
 signed char frameMultiplier = 0;
 InkyHelper inkyHelper;
 
+CPyObject pInkyFunction;
 
 class LodHandler : public CefLoadHandler {
 private:
@@ -31,7 +33,7 @@ public:
             const CefString jscode =
                     "let sheet = window.document.styleSheets[0];\n"
                     "sheet.insertRule('html {  filter: grayscale(100%); }', sheet.cssRules.length);\n"
-                    "sheet.insertRule('body {  background-color: #FFFFFF; }', sheet.cssRules.length);\n"
+                    "sheet.insertRule('body {  background-color: #FFFFFF; overflow: hidden !important;}', sheet.cssRules.length);\n"
                     "sheet.insertRule('* {  color: #000000; }', sheet.cssRules.length);\n"
                     "sheet.insertRule('::-webkit-scrollbar { width: 0px; }', sheet.cssRules.length);";
             frame->ExecuteJavaScript(jscode, frame->GetURL(), 0);
@@ -73,7 +75,7 @@ public:
 //                mono_vec[i] = (buf[i * 4]);
                 mono[i] = (buf[i * 4]);
             }
-            UpdateInky(inkyHelper,reinterpret_cast<const char*>(mono));
+            UpdateInky(pInkyFunction, reinterpret_cast<const char*>(mono));
             printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono[0], mono[1], mono[2]);
             frameMultiplier = 0;
         } else {
@@ -111,6 +113,8 @@ IMPLEMENT_REFCOUNTING(BrowserClient);
 int main(int argc, char* argv[]) {
     CefMainArgs main_args(argc, argv);
 
+    pInkyFunction = StartInky();
+
     int exit_code = CefExecuteProcess(main_args, nullptr, nullptr);
     if (exit_code >= 0)
         return exit_code;
@@ -140,5 +144,6 @@ int main(int argc, char* argv[]) {
     CefRunMessageLoop();
 
     CefShutdown();
+    CloseInky();
     return 0;
 }
