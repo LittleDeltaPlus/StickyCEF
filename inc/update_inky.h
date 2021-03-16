@@ -6,6 +6,7 @@
 #define STICKYCEF_UPDATE_INKY_H
 #pragma once
 
+
 #include "inc/pyhelper.hpp"
 
 void UpdateInky(CPyObject pFunc ,const char* img);

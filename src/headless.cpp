@@ -14,6 +14,7 @@
 
 bool pgLoaded = false;
 signed char frameMultiplier = 0;
+InkyHelper inkyHelper;
 
 CPyObject pInkyFunction;
 
