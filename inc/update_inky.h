@@ -8,7 +8,7 @@
 
 #include "inc/pyhelper.hpp"
 
-void UpdateInky(CPyObject pModule ,const char* img);
+void UpdateInky(CPyObject pFunc ,const char* img);
 
 CPyObject StartInky();
 

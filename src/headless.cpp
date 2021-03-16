@@ -15,7 +15,7 @@
 bool pgLoaded = false;
 signed char frameMultiplier = 0;
 
-CPyObject pModule;
+CPyObject pInkyFunction;
 
 class LodHandler : public CefLoadHandler {
 private:
@@ -74,7 +74,7 @@ public:
 //                mono_vec[i] = (buf[i * 4]);
                 mono[i] = (buf[i * 4]);
             }
-            UpdateInky(pModule, reinterpret_cast<const char*>(mono));
+            UpdateInky(pInkyFunction, reinterpret_cast<const char*>(mono));
             printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono[0], mono[1], mono[2]);
             frameMultiplier = 0;
         } else {
@@ -112,7 +112,7 @@ IMPLEMENT_REFCOUNTING(BrowserClient);
 int main(int argc, char* argv[]) {
     CefMainArgs main_args(argc, argv);
 
-    pModule = StartInky();
+    pInkyFunction = StartInky();
 
     int exit_code = CefExecuteProcess(main_args, nullptr, nullptr);
     if (exit_code >= 0)
