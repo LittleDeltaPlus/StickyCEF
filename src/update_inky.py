@@ -6,9 +6,9 @@ from inky import InkyWHAT
 
 
 def display_image(img_raw):
-    print("""Inky wHAT: Dither image
-    Converts and displays dithered images on Inky wHAT.
-    """)
+    # print("""Inky wHAT: Dither image
+    # Converts and displays dithered images on Inky wHAT.
+    # """)
 
     # Set up the inky wHAT display and border colour
 

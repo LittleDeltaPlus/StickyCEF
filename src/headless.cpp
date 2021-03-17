@@ -18,6 +18,8 @@ InkyHelper inkyHelper;
 
 CPyObject pInkyFunction;
 
+static int find_keyword(int argc, char *argv[], const char * keyword);
+
 class LodHandler : public CefLoadHandler {
 private:
 
@@ -69,11 +71,9 @@ public:
     void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override {
         if(pgLoaded and frameMultiplier > 15){
             auto buf = (unsigned char*)buffer;
-            auto* mono = (unsigned char*) malloc(renderWidth * renderHeight * 4 * sizeof (int));
-//            std::vector<unsigned char> mono_vec(renderWidth * renderHeight * 4);
+            auto* mono = (unsigned char*) malloc(renderWidth * renderHeight * sizeof (unsigned char));
             for (int i = 0; i < renderWidth*renderHeight; i++) {
-//                mono_vec[i] = (buf[i * 4]);
-                mono[i] = (buf[i * 4]);
+                mono[renderWidth * renderHeight - (1 + i)] = (buf[i * 4]);
             }
             UpdateInky(pInkyFunction, reinterpret_cast<const char*>(mono));
             printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono[0], mono[1], mono[2]);
@@ -111,6 +111,15 @@ IMPLEMENT_REFCOUNTING(BrowserClient);
 
 
 int main(int argc, char* argv[]) {
+
+    const int urlIndex = find_keyword(argc, argv, "-url");
+    CefStringUTF16 loadURL;
+    if(urlIndex < 0){
+        loadURL = "https://lil-delta.dev/Static_Test";
+    } else {
+        loadURL = argv[urlIndex+1];
+    }
+
     CefMainArgs main_args(argc, argv);
 
     pInkyFunction = StartInky();
@@ -135,15 +144,20 @@ int main(int argc, char* argv[]) {
     CefWindowInfo window_info;
     window_info.SetAsWindowless(0);
 
-
-    // Dynamic HTML example: https://dmitrybaranovskiy.github.io/raphael/polar-clock.html
-    // Static HTML example: https://www.magpcss.org/ceforum/index.php
-    CefRefPtr<CefBrowser> browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), "https://lil-delta.dev/nazotoki", browserSettings,
-
+    CefRefPtr<CefBrowser> browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), loadURL, browserSettings,
                                                                       nullptr, nullptr);
     CefRunMessageLoop();
 
     CefShutdown();
     CloseInky();
     return 0;
+}
+
+static int find_keyword(int argc, char *argv[], const char * keyword)
+{
+    for (int i=0; i<argc; i++)
+    {
+        if (strcmp(argv[i], keyword) == 0) return i;
+    }
+    return -1;
 }
