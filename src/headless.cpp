@@ -32,11 +32,18 @@ public:
         if (isLoading == 0) // && strURL is your page with a form
         {
             const CefString jscode =
-                    "let sheet = window.document.styleSheets[0];\n"
+                    "var sheet = (function() {\n"
+                    "var style = document.createElement(\"style\");\n"
+                    "style.appendChild(document.createTextNode(\"\"));\n"
+                    "document.head.appendChild(style);\n"
+                    "return style.sheet;\n"
+                    "})();\n"
+                    "{\n"
                     "sheet.insertRule('html {  filter: grayscale(100%); }', sheet.cssRules.length);\n"
                     "sheet.insertRule('body {  background-color: #FFFFFF; overflow: hidden !important;}', sheet.cssRules.length);\n"
                     "sheet.insertRule('* {  color: #000000; }', sheet.cssRules.length);\n"
-                    "sheet.insertRule('::-webkit-scrollbar { width: 0px; }', sheet.cssRules.length);";
+                    "sheet.insertRule('::-webkit-scrollbar { width: 0px; }', sheet.cssRules.length);\n"
+                    "}";
             frame->ExecuteJavaScript(jscode, frame->GetURL(), 0);
             appliedCSS = true;
         }
@@ -74,7 +81,7 @@ public:
             for (int i = 0; i < renderWidth*renderHeight; i++) {
                 mono[renderWidth * renderHeight - (1 + i)] = (buf[i * 4]);
             }
-            UpdateInky(pInkyFunction, reinterpret_cast<const char*>(mono));
+//            UpdateInky(pInkyFunction, reinterpret_cast<const char*>(mono));
             printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono[0], mono[1], mono[2]);
             frameMultiplier = 0;
         } else {
