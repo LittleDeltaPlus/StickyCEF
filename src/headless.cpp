@@ -2,23 +2,22 @@
 // Created by lildeltaplus on 04/12/2020.
 //
 
-
 #include <iostream>
 #include <vector>
-//#include <opencv2/core/mat.hpp>
-//#include <opencv2/highgui.hpp>
-//#include <opencv2/imgcodecs.hpp>
-//#include <opencv2/imgproc/imgproc.hpp>
 
 #include "include/cef_app.h"
 #include "include/cef_client.h"
 #include "include/cef_render_handler.h"
 #include "include/cef_load_handler.h"
+#include "inc/update_inky.h"
+#include "inc/pyhelper.hpp"
 
 bool pgLoaded = false;
+signed char frameMultiplier = 0;
 
-//uint8_t saturated_add(uint8_t val1, int8_t val2);
-//cv::Mat DitherImg(const cv::Mat& input);
+CPyObject pInkyFunction;
+
+static int find_keyword(int argc, char *argv[], const char * keyword);
 
 class LodHandler : public CefLoadHandler {
 private:
@@ -33,11 +32,18 @@ public:
         if (isLoading == 0) // && strURL is your page with a form
         {
             const CefString jscode =
-                    "let sheet = window.document.styleSheets[0];\n"
+                    "var sheet = (function() {\n"
+                    "var style = document.createElement(\"style\");\n"
+                    "style.appendChild(document.createTextNode(\"\"));\n"
+                    "document.head.appendChild(style);\n"
+                    "return style.sheet;\n"
+                    "})();\n"
+                    "{\n"
                     "sheet.insertRule('html {  filter: grayscale(100%); }', sheet.cssRules.length);\n"
-                    "sheet.insertRule('body {  background-color: #FFFFFF; }', sheet.cssRules.length);\n"
+                    "sheet.insertRule('body {  background-color: #FFFFFF; overflow: hidden !important;}', sheet.cssRules.length);\n"
                     "sheet.insertRule('* {  color: #000000; }', sheet.cssRules.length);\n"
-                    "sheet.insertRule('::-webkit-scrollbar { width: 0px; }', sheet.cssRules.length);";
+                    "sheet.insertRule('::-webkit-scrollbar { width: 0px; }', sheet.cssRules.length);\n"
+                    "}";
             frame->ExecuteJavaScript(jscode, frame->GetURL(), 0);
             appliedCSS = true;
         }
@@ -66,20 +72,20 @@ public:
 
     void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect) override {
         rect = CefRect(0, 0, renderWidth, renderHeight);
-//        return true;
     }
 
     void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override {
-        if(pgLoaded){
+        if(pgLoaded and frameMultiplier > 15){
             auto buf = (unsigned char*)buffer;
-            auto* mono = (unsigned char*) malloc(renderWidth * renderHeight * 4 * sizeof (int));
+            auto* mono = (unsigned char*) malloc(renderWidth * renderHeight * sizeof (unsigned char));
             for (int i = 0; i < renderWidth*renderHeight; i++) {
-                mono[i] = (buf[i * 4]);
+                mono[renderWidth * renderHeight - (1 + i)] = (buf[i * 4]);
             }
-//            cv::Mat img_output_grey(renderHeight, renderWidth, CV_8U, mono);
-//            imshow("display", DitherImg(img_output_grey));
-//            imshow("display", img_output_grey);
+//            UpdateInky(pInkyFunction, reinterpret_cast<const char*>(mono));
             printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono[0], mono[1], mono[2]);
+            frameMultiplier = 0;
+        } else {
+            frameMultiplier++;
         }
     }
 
@@ -111,7 +117,18 @@ IMPLEMENT_REFCOUNTING(BrowserClient);
 
 
 int main(int argc, char* argv[]) {
+
+    const int urlIndex = find_keyword(argc, argv, "-url");
+    CefStringUTF16 loadURL;
+    if(urlIndex < 0){
+        loadURL = "https://lil-delta.dev/Static_Test";
+    } else {
+        loadURL = argv[urlIndex+1];
+    }
+
     CefMainArgs main_args(argc, argv);
+
+    pInkyFunction = StartInky();
 
     int exit_code = CefExecuteProcess(main_args, nullptr, nullptr);
     if (exit_code >= 0)
@@ -133,74 +150,24 @@ int main(int argc, char* argv[]) {
     CefWindowInfo window_info;
     window_info.SetAsWindowless(0);
 
+    std::cout << "Creating Browser..." << std::endl;
 
-    // Dynamic HTML example: https://dmitrybaranovskiy.github.io/raphael/polar-clock.html
-    // Static HTML example: https://www.magpcss.org/ceforum/index.php
-    CefRefPtr<CefBrowser> browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), "https://www.magpcss.org/ceforum/index.php", browserSettings,
-
+    CefRefPtr<CefBrowser> browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), loadURL, browserSettings,
                                                                       nullptr, nullptr);
+    std::cout << "Browser created, targeting page: "<< loadURL << std::endl;
+
     CefRunMessageLoop();
 
     CefShutdown();
+    CloseInky();
     return 0;
 }
-//
-//uint8_t saturated_add(uint8_t val1, int8_t val2){
-//    int16_t val1_int = val1;
-//    int16_t val2_int = val2;
-//    int16_t tmp = val1_int + val2_int;
-//
-//    if(tmp > 255)
-//    {
-//        return 255;
-//    }
-//    else if(tmp < 0)
-//    {
-//        return 0;
-//    }
-//    else
-//    {
-//        return tmp;
-//    }
-//}
-//
-//cv::Mat DitherImg(const cv::Mat& input) {
-//    cv::Mat output = input;
-////    cv::cvtColor(input, output, cv::COLOR_RGB2GRAY);
-//
-//    int imgHeight = output.rows;
-//    int imgWidth = output.cols;
-//    int err;
-//    int8_t a,b,c,d;
-//
-//    for(int i=0; i<imgHeight; i++)
-//    {
-//        for(int j=0; j<imgWidth; j++)
-//        {
-//            if(output.at<uint8_t>(i,j) > 127)
-//            {
-//                err = output.at<uint8_t>(i,j) - 255;
-//                output.at<uint8_t>(i,j) = 255;
-//            }
-//            else
-//            {
-//                err = output.at<uint8_t>(i,j) - 0;
-//                output.at<uint8_t>(i,j) = 0;
-//            }
-//
-//            a = (err * 7) / 16;
-//            b = (err * 1) / 16;
-//            c = (err * 5) / 16;
-//            d = (err * 3) / 16;
-//
-//            if((i != (imgHeight-1)) && (j != 0) && (j != (imgWidth - 1)))
-//            {
-//                output.at<uint8_t>(i+0,j+1) = saturated_add(output.at<uint8_t>(i+0,j+1),a);
-//                output.at<uint8_t>(i+1,j+1) = saturated_add(output.at<uint8_t>(i+1,j+1),b);
-//                output.at<uint8_t>(i+1,j+0) = saturated_add(output.at<uint8_t>(i+1,j+0),c);
-//                output.at<uint8_t>(i+1,j-1) = saturated_add(output.at<uint8_t>(i+1,j-1),d);
-//            }
-//        }
-//    }
-//    return output;
-//}
+
+static int find_keyword(int argc, char *argv[], const char * keyword)
+{
+    for (int i=0; i<argc; i++)
+    {
+        if (strcmp(argv[i], keyword) == 0) return i;
+    }
+    return -1;
+}

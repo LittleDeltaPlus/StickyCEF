@@ -4,19 +4,6 @@ cmake_minimum_required(VERSION 3.12)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 
-## Cross Compiler Settings
-
-# Crosscompiler location
-#SET(CMAKE_C_COMPILER /home/lildeltaplus/pi-tool/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc)
-#SET(CMAKE_CXX_COMPILER /home/lildeltaplus/pi-tool/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc)
-#
-## Pi Sysroot
-#SET(CMAKE_FIND_ROOT_PATH /home/lildeltaplus/pi-tool/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/sysroot)
-#
-#SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-#SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-#SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-##
 
 # Project name.
 project(StickyCef)
@@ -30,10 +17,11 @@ set_property(GLOBAL PROPERTY OS_FOLDERS ON)
 #
 
 # Specify the CEF distribution version.
-set(CEF_VERSION "88.2.9+g5c8711a+chromium-88.0.4324.182")
+set(CEF_VERSION "90.6.5+g7a604aa+chromium-90.0.4430.93")
 
 #Ensure the required version of CEF is stored locally
 include(cmake/DownloadCEF.cmake)
+
 DownloadCEF("linuxarm" "${CEF_VERSION}" "${CMAKE_SOURCE_DIR}/third_party/cef")
 
 set(PROJECT_ARCH "linuxarm")
@@ -59,6 +47,11 @@ find_package(CEF REQUIRED)
 # directory.
 add_subdirectory(${CEF_LIBCEF_DLL_WRAPPER_PATH} libcef_dll_wrapper)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+#Include Python For writing to Inky
+find_package(Python3 COMPONENTS Interpreter Development)
+find_package(PythonLibs REQUIRED)
+include_directories(${PYTHON_INCLUDE_DIRS})
 
 #Include OpenCV
 #find_package(OpenCV REQUIRED)
