@@ -17,7 +17,7 @@ set_property(GLOBAL PROPERTY OS_FOLDERS ON)
 #
 
 # Specify the CEF distribution version.
-set(CEF_VERSION "88.2.9+g5c8711a+chromium-88.0.4324.182")
+set(CEF_VERSION "90.6.5+g7a604aa+chromium-90.0.4430.93")
 
 #Ensure the required version of CEF is stored locally
 include(cmake/DownloadCEF.cmake)
@@ -52,6 +52,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 find_package(Python3 COMPONENTS Interpreter Development)
 find_package(PythonLibs REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
+
+#Include OpenCV
+#find_package(OpenCV REQUIRED)
+#include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 #add_subdirectory(${CMAKE_SOURCE_DIR}/shared shared)
 # Include application targets.

@@ -150,8 +150,12 @@ int main(int argc, char* argv[]) {
     CefWindowInfo window_info;
     window_info.SetAsWindowless(0);
 
+    std::cout << "Creating Browser..." << std::endl;
+
     CefRefPtr<CefBrowser> browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), loadURL, browserSettings,
                                                                       nullptr, nullptr);
+    std::cout << "Browser created, targeting page: "<< loadURL << std::endl;
+
     CefRunMessageLoop();
 
     CefShutdown();
