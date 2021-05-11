@@ -29,7 +29,7 @@ public:
         bool appliedCSS = false;
         CefRefPtr<CefFrame> frame = browser->GetMainFrame();
         std::string strURL = frame->GetURL();
-        if (isLoading == 0) // && strURL is your page with a form
+        if (!isLoading) // && strURL is your page with a form
         {
             const CefString jscode =
                     "var sheet = (function() {\n"
@@ -47,8 +47,9 @@ public:
             frame->ExecuteJavaScript(jscode, frame->GetURL(), 0);
             appliedCSS = true;
         }
-
-        if(!appliedCSS) pgLoaded = true;
+        if(appliedCSS && !isLoading){
+            pgLoaded = true;
+        }
     }
 
 IMPLEMENT_REFCOUNTING(LodHandler);
