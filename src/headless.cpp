@@ -75,14 +75,14 @@ public:
     }
 
     void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override {
-        if(pgLoaded and frameMultiplier > 15){
+        if(pgLoaded and frameMultiplier > 10){
             auto buf = (unsigned char*)buffer;
             auto* mono = (unsigned char*) malloc(renderWidth * renderHeight * sizeof (unsigned char));
             for (int i = 0; i < renderWidth*renderHeight; i++) {
                 mono[renderWidth * renderHeight - (1 + i)] = (buf[i * 4]);
             }
-//            UpdateInky(pInkyFunction, reinterpret_cast<const char*>(mono));
-            printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono[0], mono[1], mono[2]);
+            UpdateInky(pInkyFunction, reinterpret_cast<const char*>(mono));
+            std::cout << "frame rendered (pixels[1-3]:" <<  int(mono[0]) << " " << int(mono[1]) << " " << int(mono[2]) << ")" << std::endl;
             frameMultiplier = 0;
         } else {
             frameMultiplier++;
@@ -142,8 +142,6 @@ int main(int argc, char* argv[]) {
     auto* osrHandler = new OSRHandler(400, 300);
     auto* lodHandler = new LodHandler();
     CefRefPtr<BrowserClient> browserClient = new BrowserClient(osrHandler, lodHandler);
-
-
 
     CefBrowserSettings browserSettings;
     browserSettings.windowless_frame_rate = 1;
