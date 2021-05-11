@@ -27,12 +27,13 @@ void CloseInky(){
     Py_Finalize();
 }
 
-bool UpdateInky(CPyObject pFunc, const char* img){
+bool UpdateInky(CPyObject pFunc, const char* img, int frame){
     if (pFunc && PyCallable_Check(pFunc)) {
-        CPyObject pArgs = PyTuple_Pack(1, PyByteArray_FromStringAndSize(img, 400 * 300));
+        CPyObject pArgs = PyTuple_Pack(2, PyByteArray_FromStringAndSize(img, 400 * 300), PyLong_FromLong(long(frame)));
         CPyObject pValue = PyObject_CallObject(pFunc, pArgs);
         if(pValue && PyObject_IsTrue(pValue)){
             PyErr_Print();
+            Py_INCREF(pFunc);
             return true;
         }
         PyErr_Print();

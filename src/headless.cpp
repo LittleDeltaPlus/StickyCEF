@@ -13,6 +13,7 @@
 #include "inc/pyhelper.hpp"
 
 bool pgLoaded = false;
+int frameNo = 0;
 
 CPyObject pInkyFunction;
 
@@ -80,10 +81,13 @@ public:
             for (int i = 0; i < renderWidth * renderHeight; i++) {
                 mono[renderWidth * renderHeight - (1 + i)] = (buf[i * 4]);
             }
-            bool testSuccess = UpdateInky(pInkyFunction, reinterpret_cast<const char *>(mono));
+            bool testSuccess = UpdateInky(pInkyFunction, reinterpret_cast<const char *>(mono), frameNo);
             printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono[0], mono[1], mono[2]);
             if (testSuccess) {
-                CefQuitMessageLoop();
+                frameNo++;
+                if (frameNo == 2){
+                    CefQuitMessageLoop();
+                }
             }
         }
     }

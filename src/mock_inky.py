@@ -5,7 +5,7 @@ from PIL import Image
 from PIL import ImageChops
 
 
-def display_image(img_raw):
+def display_image(img_raw, frame):
     # Open our image file that was passed in from the command line
 
     img = Image.frombytes("L", (400, 300), bytes(img_raw))
@@ -13,19 +13,22 @@ def display_image(img_raw):
 
     # Open the known-good test image
 
-    known_img = Image.open(r"/home/lildeltaplus/cef-sticky/test/open.png")
+    if frame == 0:
+        known_img = Image.open(r"/home/lildeltaplus/cef-sticky/test/closed.png")
+    elif frame == 1:
+        known_img = Image.open(r"/home/lildeltaplus/cef-sticky/test/open.png")
+    else:
+        return False
 
     # Test against each-other
 
     diff = ImageChops.difference(img, known_img)
 
+    # Output Test Results
+
     if diff.getbbox():
-        print("""Inky Test:
-The Generated and reference images are different
-        """)
+        print(f'Inky Test: The Generated frame {frame} and reference images are different')
         return False
     else:
-        print("""Inky Test:
-The Generated and reference images are the same
-            """)
+        print(f'Inky Test: The Generated frame {frame} and reference images are the same')
         return True
