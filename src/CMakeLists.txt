@@ -9,7 +9,6 @@ if(OS_LINUX)
     add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
 
     add_library(inky_helper update_inky.cpp ../inc/pyhelper.hpp ../inc/update_inky.h)
-    add_library(dither dither.cpp ../inc/dither.h)
     include_directories(../inc ../src )
 
     target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper inky_helper ${CEF_STANDARD_LIBS} ${PYTHON_LIBRARIES})
