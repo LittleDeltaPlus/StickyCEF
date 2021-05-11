@@ -9,7 +9,7 @@
 
 #include "inc/pyhelper.hpp"
 
-void UpdateInky(CPyObject pFunc ,const char* img);
+bool UpdateInky(CPyObject pFunc ,const char* img);
 
 CPyObject StartInky();
 

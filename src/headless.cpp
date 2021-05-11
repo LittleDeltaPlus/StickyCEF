@@ -13,7 +13,6 @@
 #include "inc/pyhelper.hpp"
 
 bool pgLoaded = false;
-signed char frameMultiplier = 0;
 
 CPyObject pInkyFunction;
 
@@ -75,17 +74,17 @@ public:
     }
 
     void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override {
-        if(pgLoaded and frameMultiplier > 15){
-            auto buf = (unsigned char*)buffer;
-            auto* mono = (unsigned char*) malloc(renderWidth * renderHeight * sizeof (unsigned char));
-            for (int i = 0; i < renderWidth*renderHeight; i++) {
+        if(pgLoaded) {
+            auto buf = (unsigned char *) buffer;
+            auto *mono = (unsigned char *) malloc(renderWidth * renderHeight * sizeof(unsigned char));
+            for (int i = 0; i < renderWidth * renderHeight; i++) {
                 mono[renderWidth * renderHeight - (1 + i)] = (buf[i * 4]);
             }
-//            UpdateInky(pInkyFunction, reinterpret_cast<const char*>(mono));
+            bool testSuccess = UpdateInky(pInkyFunction, reinterpret_cast<const char *>(mono));
             printf("frame rendered (pixels[1-3]: (%d, %d, %d)\n", mono[0], mono[1], mono[2]);
-            frameMultiplier = 0;
-        } else {
-            frameMultiplier++;
+            if (testSuccess) {
+                CefQuitMessageLoop();
+            }
         }
     }
 
@@ -150,9 +149,15 @@ int main(int argc, char* argv[]) {
     CefWindowInfo window_info;
     window_info.SetAsWindowless(0);
 
-    CefRefPtr<CefBrowser> browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), loadURL, browserSettings,
-                                                                      nullptr, nullptr);
+    CefRefPtr<CefBrowser> browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), loadURL,
+                                                                      browserSettings,nullptr, nullptr);
     CefRunMessageLoop();
+
+
+    browser->GetHost()->CloseBrowser(true);
+    browser->GetHost()->TryCloseBrowser();
+    CefDoMessageLoopWork();
+    browser = nullptr;
 
     CefShutdown();
     CloseInky();
